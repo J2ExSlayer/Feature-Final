@@ -28,7 +28,7 @@ public class GroundCheck : MonoBehaviour
         if (other.gameObject == playerController.gameObject) return;
 
 
-        playerController.SetGrounded(false);
+        playerController.SetGrounded(true);
 
     }
 
