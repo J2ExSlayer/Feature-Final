@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
     public float sprintSpeed;
     public float crouchSpeed;
+    public float proneSpeed;
 
     private float lookRotation;
     
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isSprinting;
     private bool isCrouching;
+    private bool isProne;
     
     private Vector2 move;
     private Vector2 look;
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         anim.SetBool("isCrouching", isCrouching);
+        anim.SetBool("isProne", isProne);
     }
 
 
@@ -87,7 +90,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 currentVelocity = rb.velocity;
         Vector3 targetVelocity = new Vector3(move.x, 0, move.y);
-        targetVelocity *= isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : speed); // conditional operator statement, isSprinting (true)? (if yes) sprintSpeed : (if no) speed;
+        targetVelocity *= isProne ? proneSpeed : (isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : speed)); // conditional operator statement, isSprinting (true)? (if yes) sprintSpeed : (if no) speed;
         // using it twice with brackets, this lets you nest it as far as I can tell
 
         targetVelocity = transform.TransformDirection(targetVelocity);
@@ -99,6 +102,20 @@ public class PlayerController : MonoBehaviour
         Vector3.ClampMagnitude(velocityChange, maxForce);
 
         rb.AddForce(velocityChange, ForceMode.VelocityChange);
+
+        
+        if (GetComponent<CapsuleCollider>().height <= 1)
+        {
+              speed = proneSpeed;
+        }
+
+        if (GetComponent<CapsuleCollider>().height > 1)
+        {
+            speed = 10f;
+        }
+            
+        
+        
 
     }
 
@@ -121,6 +138,10 @@ public class PlayerController : MonoBehaviour
     public void OnCrouch(InputAction.CallbackContext context) 
     {
         isCrouching = context.ReadValueAsButton();
+    }
+    public void OnProne(InputAction.CallbackContext context) 
+    {
+        isProne = context.ReadValueAsButton();
     }
 
     public void OnLook(InputAction.CallbackContext context)

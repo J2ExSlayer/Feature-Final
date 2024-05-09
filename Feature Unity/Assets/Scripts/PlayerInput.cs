@@ -71,6 +71,33 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Prone"",
+                    ""type"": ""Button"",
+                    ""id"": ""df5e8f7e-0725-4b67-947d-be2bbc11b1d1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Lean Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""79756d2e-cded-464e-beee-4f80c69fa5b6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Lean Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""118ecb79-66fa-443c-a2d5-68a6da129435"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -165,11 +192,44 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""11c08889-b0db-402e-a029-e42203b3edc2"",
-                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7162094c-faab-4b98-89b5-cb6393c2af62"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lean Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""00dee664-eee5-4c8e-8fdf-70572391b716"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lean Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1fb3c204-3ba9-4c2e-9dd7-9272b11645f0"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Prone"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -185,6 +245,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Moveset_Jump = m_Moveset.FindAction("Jump", throwIfNotFound: true);
         m_Moveset_Sprint = m_Moveset.FindAction("Sprint", throwIfNotFound: true);
         m_Moveset_Crouch = m_Moveset.FindAction("Crouch", throwIfNotFound: true);
+        m_Moveset_Prone = m_Moveset.FindAction("Prone", throwIfNotFound: true);
+        m_Moveset_LeanLeft = m_Moveset.FindAction("Lean Left", throwIfNotFound: true);
+        m_Moveset_LeanRight = m_Moveset.FindAction("Lean Right", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +314,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Moveset_Jump;
     private readonly InputAction m_Moveset_Sprint;
     private readonly InputAction m_Moveset_Crouch;
+    private readonly InputAction m_Moveset_Prone;
+    private readonly InputAction m_Moveset_LeanLeft;
+    private readonly InputAction m_Moveset_LeanRight;
     public struct MovesetActions
     {
         private @PlayerInput m_Wrapper;
@@ -260,6 +326,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Moveset_Jump;
         public InputAction @Sprint => m_Wrapper.m_Moveset_Sprint;
         public InputAction @Crouch => m_Wrapper.m_Moveset_Crouch;
+        public InputAction @Prone => m_Wrapper.m_Moveset_Prone;
+        public InputAction @LeanLeft => m_Wrapper.m_Moveset_LeanLeft;
+        public InputAction @LeanRight => m_Wrapper.m_Moveset_LeanRight;
         public InputActionMap Get() { return m_Wrapper.m_Moveset; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -284,6 +353,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Crouch.started += instance.OnCrouch;
             @Crouch.performed += instance.OnCrouch;
             @Crouch.canceled += instance.OnCrouch;
+            @Prone.started += instance.OnProne;
+            @Prone.performed += instance.OnProne;
+            @Prone.canceled += instance.OnProne;
+            @LeanLeft.started += instance.OnLeanLeft;
+            @LeanLeft.performed += instance.OnLeanLeft;
+            @LeanLeft.canceled += instance.OnLeanLeft;
+            @LeanRight.started += instance.OnLeanRight;
+            @LeanRight.performed += instance.OnLeanRight;
+            @LeanRight.canceled += instance.OnLeanRight;
         }
 
         private void UnregisterCallbacks(IMovesetActions instance)
@@ -303,6 +381,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Crouch.started -= instance.OnCrouch;
             @Crouch.performed -= instance.OnCrouch;
             @Crouch.canceled -= instance.OnCrouch;
+            @Prone.started -= instance.OnProne;
+            @Prone.performed -= instance.OnProne;
+            @Prone.canceled -= instance.OnProne;
+            @LeanLeft.started -= instance.OnLeanLeft;
+            @LeanLeft.performed -= instance.OnLeanLeft;
+            @LeanLeft.canceled -= instance.OnLeanLeft;
+            @LeanRight.started -= instance.OnLeanRight;
+            @LeanRight.performed -= instance.OnLeanRight;
+            @LeanRight.canceled -= instance.OnLeanRight;
         }
 
         public void RemoveCallbacks(IMovesetActions instance)
@@ -327,5 +414,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
+        void OnProne(InputAction.CallbackContext context);
+        void OnLeanLeft(InputAction.CallbackContext context);
+        void OnLeanRight(InputAction.CallbackContext context);
     }
 }
