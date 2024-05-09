@@ -55,9 +55,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Run"",
+                    ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""8087efe9-763a-45cf-82ce-c30f7c5df7b7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""142a61dc-8596-49dc-9ef4-53d3d28f7fb0"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -145,11 +154,22 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""70f511b8-684d-4e7a-9b62-5f9047d867dc"",
-                    ""path"": ""<Keyboard>/shift"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Run"",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""11c08889-b0db-402e-a029-e42203b3edc2"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -163,7 +183,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Moveset_Move = m_Moveset.FindAction("Move", throwIfNotFound: true);
         m_Moveset_Look = m_Moveset.FindAction("Look", throwIfNotFound: true);
         m_Moveset_Jump = m_Moveset.FindAction("Jump", throwIfNotFound: true);
-        m_Moveset_Run = m_Moveset.FindAction("Run", throwIfNotFound: true);
+        m_Moveset_Sprint = m_Moveset.FindAction("Sprint", throwIfNotFound: true);
+        m_Moveset_Crouch = m_Moveset.FindAction("Crouch", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -228,7 +249,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Moveset_Move;
     private readonly InputAction m_Moveset_Look;
     private readonly InputAction m_Moveset_Jump;
-    private readonly InputAction m_Moveset_Run;
+    private readonly InputAction m_Moveset_Sprint;
+    private readonly InputAction m_Moveset_Crouch;
     public struct MovesetActions
     {
         private @PlayerInput m_Wrapper;
@@ -236,7 +258,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Moveset_Move;
         public InputAction @Look => m_Wrapper.m_Moveset_Look;
         public InputAction @Jump => m_Wrapper.m_Moveset_Jump;
-        public InputAction @Run => m_Wrapper.m_Moveset_Run;
+        public InputAction @Sprint => m_Wrapper.m_Moveset_Sprint;
+        public InputAction @Crouch => m_Wrapper.m_Moveset_Crouch;
         public InputActionMap Get() { return m_Wrapper.m_Moveset; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -255,9 +278,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Run.started += instance.OnRun;
-            @Run.performed += instance.OnRun;
-            @Run.canceled += instance.OnRun;
+            @Sprint.started += instance.OnSprint;
+            @Sprint.performed += instance.OnSprint;
+            @Sprint.canceled += instance.OnSprint;
+            @Crouch.started += instance.OnCrouch;
+            @Crouch.performed += instance.OnCrouch;
+            @Crouch.canceled += instance.OnCrouch;
         }
 
         private void UnregisterCallbacks(IMovesetActions instance)
@@ -271,9 +297,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Run.started -= instance.OnRun;
-            @Run.performed -= instance.OnRun;
-            @Run.canceled -= instance.OnRun;
+            @Sprint.started -= instance.OnSprint;
+            @Sprint.performed -= instance.OnSprint;
+            @Sprint.canceled -= instance.OnSprint;
+            @Crouch.started -= instance.OnCrouch;
+            @Crouch.performed -= instance.OnCrouch;
+            @Crouch.canceled -= instance.OnCrouch;
         }
 
         public void RemoveCallbacks(IMovesetActions instance)
@@ -296,6 +325,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnRun(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
+        void OnCrouch(InputAction.CallbackContext context);
     }
 }
