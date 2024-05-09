@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,15 +11,23 @@ public class PlayerController : MonoBehaviour
 
     public GameObject camHolder;
 
+    public Animator anim;
+
     public float speed;
     public float sensitivity;
     public float maxForce;
     public float jumpForce;
+    public float sprintSpeed;
+    public float crouchSpeed;
+
+    private float lookRotation;
+    
 
     public bool grounded;
 
-    private float lookRotation;
-
+    private bool isSprinting;
+    private bool isCrouching;
+    
     private Vector2 move;
     private Vector2 look;
 
@@ -27,11 +36,16 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    void Update()
+    {
+        anim.SetBool("isCrouching", isCrouching);
+    }
 
 
     void FixedUpdate()
     {
         Move();
+        
     }
 
     void LateUpdate()
@@ -41,16 +55,18 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        Vector3 jumpForces = Vector3.zero;
+        Vector3 jumpForces = rb.velocity;
 
         if (grounded)
         {
-            jumpForces = Vector3.up * jumpForce;
+            jumpForces.y = jumpForce;
         }
 
-        rb.AddForce(jumpForces, ForceMode.VelocityChange);
+        rb.velocity = jumpForces;
 
     }
+
+    
 
 
     public void SetGrounded(bool state)
@@ -71,7 +87,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 currentVelocity = rb.velocity;
         Vector3 targetVelocity = new Vector3(move.x, 0, move.y);
-        targetVelocity *= speed;
+        targetVelocity *= isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : speed); // conditional operator statement, isSprinting (true)? (if yes) sprintSpeed : (if no) speed;
+        // using it twice with brackets, this lets you nest it as far as I can tell
 
         targetVelocity = transform.TransformDirection(targetVelocity);
 
@@ -85,9 +102,25 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    
+    
+
+    
+
+
     public void OnMove(InputAction.CallbackContext context)
     {
         move = context.ReadValue<Vector2>();
+    }
+
+    public void OnSprint(InputAction.CallbackContext context) 
+    {
+        isSprinting = context.ReadValueAsButton();
+    }
+    
+    public void OnCrouch(InputAction.CallbackContext context) 
+    {
+        isCrouching = context.ReadValueAsButton();
     }
 
     public void OnLook(InputAction.CallbackContext context)
@@ -100,6 +133,7 @@ public class PlayerController : MonoBehaviour
         Jump();
     }
 
+    
 
 
 }
